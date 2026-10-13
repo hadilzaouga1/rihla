@@ -10,7 +10,9 @@ class HomeScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: const [
-            Text('Rihla arrive bientôt...'),
+            HomeHeader(prenom: 'Hadil'),
+            SizedBox(height: 20),
+            SearchBox(),
           ],
         ),
       ),
