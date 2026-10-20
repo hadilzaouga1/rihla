@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
+import 'favorite_button.dart'; 
 
 class DestinationCard extends StatelessWidget {
   final Destination destination;
@@ -68,6 +69,7 @@ class DestinationCard extends StatelessWidget {
                           color: cs.primary,
                         ),
                       ),
+                      const FavoriteButton(),
                     ],
                   ),
                 ],
