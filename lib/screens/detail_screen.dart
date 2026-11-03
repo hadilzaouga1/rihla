@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
 import '../widgets/favorite_button.dart';
@@ -78,9 +77,9 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset(
-                    d.image,
-                    fit: BoxFit.contain,
+                  child: Hero(
+                    tag: 'image-${d.nom}',
+                    child: Image.asset(d.image, fit: BoxFit.cover),
                   ),
                 ),
 
