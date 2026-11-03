@@ -1,7 +1,9 @@
+
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
 import '../widgets/favorite_button.dart';
-import 'reservation_screen.dart'; 
+import '../models/reservation.dart';
+import 'reservation_screen.dart';
 
 class DetailScreen extends StatefulWidget {
   final Destination destination;
@@ -14,6 +16,51 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   int _voyageurs = 2;
+
+  // Réserver et récupérer la réservation
+  Future<void> _reserver() async {
+    final reservation = await Navigator.push<Reservation>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ReservationScreen(
+          destination: widget.destination,
+          voyageurs: _voyageurs,
+        ),
+      ),
+    );
+
+    // TODO 3 : si null, s'arrêter
+    if (reservation == null) return;
+
+    // TODO 4 : si l'écran n'est plus affiché, s'arrêter
+    if (!mounted) return;
+
+    // TODO 5 : afficher le dialogue de confirmation
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: const Icon(
+          Icons.check_circle,
+          color: Colors.green,
+          size: 48,
+        ),
+        title: const Text('Réservation confirmée'),
+        content: Text(
+          '${reservation.nom}, votre séjour à ${reservation.destination.nom} '
+          'est réservé pour ${reservation.voyageurs} voyageur(s), '
+          'formule ${reservation.formule}.\n\n'
+          'Total : ${reservation.total} DT\n'
+          'Un e-mail de confirmation sera envoyé à ${reservation.email}.',
+        ),
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Parfait'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +78,13 @@ class _DetailScreenState extends State<DetailScreen> {
             child: Stack(
               children: [
                 Positioned.fill(
-                  child: Image.asset(d.image, fit: BoxFit.contain), 
+                  child: Image.asset(
+                    d.image,
+                    fit: BoxFit.contain,
+                  ),
                 ),
+
+                // Bouton retour
                 Positioned(
                   top: 16,
                   left: 16,
@@ -47,6 +99,8 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ),
                 ),
+
+                // Bouton favori
                 Positioned(
                   top: 16,
                   right: 16,
@@ -60,11 +114,13 @@ class _DetailScreenState extends State<DetailScreen> {
               ],
             ),
           ),
+
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Nom et note
                 Row(
                   children: [
                     Expanded(
@@ -77,7 +133,9 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: cs.primaryContainer,
                         borderRadius: BorderRadius.circular(20),
@@ -85,8 +143,11 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.star,
-                              color: Colors.amber, size: 18),
+                          const Icon(
+                            Icons.star,
+                            color: Colors.amber,
+                            size: 18,
+                          ),
                           const SizedBox(width: 4),
                           Text(d.note.toString()),
                         ],
@@ -94,17 +155,30 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 4),
+
+                // Région
                 Row(
                   children: [
-                    Icon(Icons.place_outlined,
-                        size: 16, color: cs.onSurfaceVariant),
+                    Icon(
+                      Icons.place_outlined,
+                      size: 16,
+                      color: cs.onSurfaceVariant,
+                    ),
                     const SizedBox(width: 4),
-                    Text(d.region,
-                        style: TextStyle(color: cs.onSurfaceVariant)),
+                    Text(
+                      d.region,
+                      style: TextStyle(
+                        color: cs.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
+
                 const SizedBox(height: 20),
+
+                // Informations du voyage
                 Row(
                   children: [
                     Expanded(
@@ -132,35 +206,60 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 24),
 
-                // À propos + description
-                Text('À propos',
-                    style: theme.textTheme.titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold)),
+                // À propos
+                Text(
+                  'À propos',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
                 const SizedBox(height: 8),
+
                 Text(d.description),
 
                 const SizedBox(height: 24),
+
+                // Nombre de voyageurs
                 Row(
                   children: [
-                    Text('Voyageurs',
-                        style: theme.textTheme.titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      'Voyageurs',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
                     const Spacer(),
+
                     IconButton.outlined(
                       onPressed: _voyageurs > 1
                           ? () => setState(() => _voyageurs--)
                           : null,
                       icon: const Icon(Icons.remove),
                     ),
+
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text('$_voyageurs',
-                          style: theme.textTheme.titleMedium),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                      ),
+                      child: Text(
+                        '$_voyageurs',
+                        style: theme.textTheme.titleMedium,
+                      ),
                     ),
+
                     IconButton.outlined(
-                      onPressed: () => setState(() => _voyageurs++),
+                      onPressed: () {
+                        setState(() {
+                          if (_voyageurs < 12) {
+                            _voyageurs++;
+                          }
+                        });
+                      },
                       icon: const Icon(Icons.add),
                     ),
                   ],
@@ -170,6 +269,8 @@ class _DetailScreenState extends State<DetailScreen> {
           ),
         ],
       ),
+
+      // Barre de réservation
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -179,30 +280,32 @@ class _DetailScreenState extends State<DetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Total',
-                      style: TextStyle(color: cs.onSurfaceVariant)),
+                  Text(
+                    'Total',
+                    style: TextStyle(
+                      color: cs.onSurfaceVariant,
+                    ),
+                  ),
+
                   Text(
                     '$total DT',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
+
               const Spacer(),
+
+              // Bouton Réserver
               FilledButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReservationScreen(
-                        destination: d,
-                        voyageurs: _voyageurs,
-                      ),
-                    ),
-                  );
-                },
+                onPressed: _reserver,
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
                   child: Text('Réserver'),
                 ),
               ),
@@ -214,6 +317,7 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 }
 
+// Tuile d'information
 class _Tuile extends StatelessWidget {
   final IconData icone;
   final String label;
@@ -228,19 +332,41 @@ class _Tuile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      padding: const EdgeInsets.symmetric(
+        vertical: 12,
+        horizontal: 8,
+      ),
       decoration: BoxDecoration(
-        border: Border.all(color: cs.outlineVariant),
+        border: Border.all(
+          color: cs.outlineVariant,
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Icon(icone, color: cs.primary),
+          Icon(
+            icone,
+            color: cs.primary,
+          ),
+
           const SizedBox(height: 4),
-          Text(label,
-              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12)),
-          Text(valeur, style: const TextStyle(fontWeight: FontWeight.bold)),
+
+          Text(
+            label,
+            style: TextStyle(
+              color: cs.onSurfaceVariant,
+              fontSize: 12,
+            ),
+          ),
+
+          Text(
+            valeur,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ],
       ),
     );

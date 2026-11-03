@@ -118,34 +118,23 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   // Valider le formulaire
   void _valider() {
-    if (!_formKey.currentState!.validate()) {
-      setState(() {
-        _autoValidation = AutovalidateMode.onUserInteraction;
-      });
-      return;
-    }
-
-    if (_date == null) {
-      setState(() {
-        _autoValidation = AutovalidateMode.onUserInteraction;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Choisissez une date de départ'),
-        ),
-      );
-      return;
-    }
-
-    if (!_conditions) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Formulaire valide'),
-      ),
-    );
+  if (!_formKey.currentState!.validate()) {
+    setState(() => _autoValidation = AutovalidateMode.onUserInteraction);
+    return;
   }
+
+  final reservation = Reservation(
+    destination: widget.destination,
+    nom: _nomCtrl.text.trim(),
+    email: _emailCtrl.text.trim(),
+    telephone: _telCtrl.text.trim(),
+    dateDepart: _date!,
+    voyageurs: widget.voyageurs,
+    formule: _formule,
+  );
+
+  Navigator.pop(context, reservation);
+}
 
   @override
   Widget build(BuildContext context) {
