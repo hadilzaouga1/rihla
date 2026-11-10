@@ -1,11 +1,11 @@
 import '../models/destination.dart';
 
 /// Catégories affichées sous forme de puces (ChoiceChip).
-const List<String> categories = ['Tout', 'Plage', 'Désert', 'Patrimoine'];
 
 /// Données de démonstration (fichier fourni, à copier tel quel).
 const List<Destination> destinations = [
   Destination(
+    id: '1',
     nom: 'Sidi Bou Saïd',
     region: 'Tunis',
     categorie: 'Patrimoine',
@@ -18,6 +18,7 @@ const List<Destination> destinations = [
         'blanches aux portes bleues, ses ruelles fleuries et le café des Délices.',
   ),
   Destination(
+    id: '2',
     nom: 'Djerba',
     region: 'Médenine',
     categorie: 'Plage',
@@ -30,6 +31,7 @@ const List<Destination> destinations = [
         'traditionnels et la Djerba Explore pour toute la famille.',
   ),
   Destination(
+    id: '3',
     nom: 'Tozeur',
     region: 'Tozeur',
     categorie: 'Désert',
@@ -42,6 +44,7 @@ const List<Destination> destinations = [
         'briques ocre et couchers de soleil sur le chott El Djérid.',
   ),
   Destination(
+    id: '4',
     nom: 'El Jem',
     region: 'Mahdia',
     categorie: 'Patrimoine',
@@ -54,6 +57,7 @@ const List<Destination> destinations = [
         "patrimoine mondial de l'UNESCO, et son festival de musique symphonique.",
   ),
   Destination(
+    id: '5',
     nom: 'Douz',
     region: 'Kébili',
     categorie: 'Désert',
@@ -66,6 +70,7 @@ const List<Destination> destinations = [
         "l'expérience saharienne par excellence.",
   ),
   Destination(
+    id: '6',
     nom: 'Hammamet',
     region: 'Nabeul',
     categorie: 'Plage',
