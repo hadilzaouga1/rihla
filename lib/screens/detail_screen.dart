@@ -3,6 +3,7 @@ import '../models/destination.dart';
 import '../widgets/favorite_button.dart';
 import '../models/reservation.dart';
 import 'reservation_screen.dart';
+import '../services/api_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final Destination destination;
@@ -34,22 +35,37 @@ class _DetailScreenState extends State<DetailScreen> {
     // TODO 4 : si l'écran n'est plus affiché, s'arrêter
     if (!mounted) return;
 
-    // TODO 5 : afficher le dialogue de confirmation
+    // TODO 5 : appeler l'API et récupérer l'ID
+    final String id;
+    try {
+      id = await ApiService.creerReservation(reservation);
+    } catch (e) {
+      if (!mounted) return;
+      // TODO 6 : SnackBar rouge en cas d'erreur
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Envoi impossible : json-server est-il lancé ?'),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+      return; // pas de confirmation si rien n'est enregistré
+    }
+
+    if (!mounted) return;
+
+    // Affichage de la confirmation avec le numéro de réservation
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        icon: const Icon(
-          Icons.check_circle,
-          color: Colors.green,
-          size: 48,
-        ),
+        icon: const Icon(Icons.check_circle, color: Colors.green, size: 48),
         title: const Text('Réservation confirmée'),
         content: Text(
-          '${reservation.nom}, votre séjour à ${reservation.destination.nom} '
-          'est réservé pour ${reservation.voyageurs} voyageur(s), '
-          'formule ${reservation.formule}.\n\n'
+          '${reservation.nom}, votre séjour à '
+          '${reservation.destination.nom} est enregistré.\n\n'
+          '${reservation.voyageurs} voyageur(s) · ${reservation.formule}\n'
           'Total : ${reservation.total} DT\n'
-          'Un e-mail de confirmation sera envoyé à ${reservation.email}.',
+          'Confirmation envoyée à ${reservation.email}.\n\n'
+          'N° de réservation : $id',
         ),
         actions: [
           FilledButton(
@@ -142,11 +158,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                            size: 18,
-                          ),
+                          const Icon(Icons.star, color: Colors.amber, size: 18),
                           const SizedBox(width: 4),
                           Text(d.note.toString()),
                         ],
@@ -168,9 +180,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     const SizedBox(width: 4),
                     Text(
                       d.region,
-                      style: TextStyle(
-                        color: cs.onSurfaceVariant,
-                      ),
+                      style: TextStyle(color: cs.onSurfaceVariant),
                     ),
                   ],
                 ),
@@ -242,9 +252,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
 
                     Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
                         '$_voyageurs',
                         style: theme.textTheme.titleMedium,
@@ -279,12 +287,7 @@ class _DetailScreenState extends State<DetailScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Total',
-                    style: TextStyle(
-                      color: cs.onSurfaceVariant,
-                    ),
-                  ),
+                  Text('Total', style: TextStyle(color: cs.onSurfaceVariant)),
 
                   Text(
                     '$total DT',
@@ -301,10 +304,7 @@ class _DetailScreenState extends State<DetailScreen> {
               FilledButton(
                 onPressed: _reserver,
                 child: const Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   child: Text('Réserver'),
                 ),
               ),
@@ -333,39 +333,23 @@ class _Tuile extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 8,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: cs.outlineVariant,
-        ),
+        border: Border.all(color: cs.outlineVariant),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Icon(
-            icone,
-            color: cs.primary,
-          ),
+          Icon(icone, color: cs.primary),
 
           const SizedBox(height: 4),
 
           Text(
             label,
-            style: TextStyle(
-              color: cs.onSurfaceVariant,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
           ),
 
-          Text(
-            valeur,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          Text(valeur, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
