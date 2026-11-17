@@ -18,7 +18,7 @@ class FavoriteButton extends StatelessWidget {
         color: favori ? Colors.red : null,
       ),
       onPressed: () {
-        context.read<FavorisModel>().basculer(destination);
+        context.read<FavorisModel>().gererFavori(destination);
       },
     );
   }
