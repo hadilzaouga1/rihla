@@ -11,7 +11,7 @@ class FavorisModel extends ChangeNotifier {
 
   bool estFavori(Destination d) => _favoris.containsKey(d.id);
 
-  bool basculer(Destination d) {
+  bool toggle(Destination d) {
     final bool ajoute = !_favoris.containsKey(d.id);
 
     if (ajoute) {
