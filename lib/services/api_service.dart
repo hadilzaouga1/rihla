@@ -11,9 +11,11 @@ class ApiService {
     final reponse = await http
         .get(_uri('/destinations'))
         .timeout(ApiConfig.timeout);
+
     if (reponse.statusCode != 200) {
       throw Exception('Erreur ${reponse.statusCode}');
     }
+
     final List<dynamic> liste = jsonDecode(utf8.decode(reponse.bodyBytes));
 
     return liste
@@ -26,7 +28,6 @@ class ApiService {
         .post(
           _uri('/reservations'),
           headers: {'Content-Type': 'application/json'},
-
           body: jsonEncode(reservation.toJson()),
         )
         .timeout(ApiConfig.timeout);

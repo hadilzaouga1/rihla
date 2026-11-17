@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/destination.dart';
@@ -118,23 +117,23 @@ class _ReservationScreenState extends State<ReservationScreen> {
 
   // Valider le formulaire
   void _valider() {
-  if (!_formKey.currentState!.validate()) {
-    setState(() => _autoValidation = AutovalidateMode.onUserInteraction);
-    return;
+    if (!_formKey.currentState!.validate()) {
+      setState(() => _autoValidation = AutovalidateMode.onUserInteraction);
+      return;
+    }
+
+    final reservation = Reservation(
+      destination: widget.destination,
+      nom: _nomCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      telephone: _telCtrl.text.trim(),
+      dateDepart: _date!,
+      voyageurs: widget.voyageurs,
+      formule: _formule,
+    );
+
+    Navigator.pop(context, reservation);
   }
-
-  final reservation = Reservation(
-    destination: widget.destination,
-    nom: _nomCtrl.text.trim(),
-    email: _emailCtrl.text.trim(),
-    telephone: _telCtrl.text.trim(),
-    dateDepart: _date!,
-    voyageurs: widget.voyageurs,
-    formule: _formule,
-  );
-
-  Navigator.pop(context, reservation);
-}
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +142,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
     final d = widget.destination;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Réserver'),
-      ),
+      appBar: AppBar(title: const Text('Réserver')),
 
       body: Form(
         key: _formKey,
@@ -180,9 +177,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                         ),
                         Text(
                           '${d.duree} • ${widget.voyageurs} voyageur(s)',
-                          style: TextStyle(
-                            color: cs.onSurfaceVariant,
-                          ),
+                          style: TextStyle(color: cs.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -204,10 +199,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
               // Nom complet
               TextFormField(
                 controller: _nomCtrl,
-                decoration: _deco(
-                  'Nom complet',
-                  Icons.person_outline,
-                ),
+                decoration: _deco('Nom complet', Icons.person_outline),
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
                 validator: _validatorNom,
@@ -218,10 +210,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
               // E-mail
               TextFormField(
                 controller: _emailCtrl,
-                decoration: _deco(
-                  'E-mail',
-                  Icons.email_outlined,
-                ),
+                decoration: _deco('E-mail', Icons.email_outlined),
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 validator: _validatorEmail,
@@ -266,8 +255,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                   'Date de départ',
                   Icons.calendar_month_outlined,
                 ),
-                validator: (_) =>
-                    _date == null ? 'Choisissez une date' : null,
+                validator: (_) => _date == null ? 'Choisissez une date' : null,
               ),
 
               const SizedBox(height: 16),
@@ -306,12 +294,8 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
-                title: const Text(
-                  "J'accepte les conditions d'annulation",
-                ),
-                subtitle: const Text(
-                  'Annulation gratuite jusqu\'à 48 h avant',
-                ),
+                title: const Text("J'accepte les conditions d'annulation"),
+                subtitle: const Text('Annulation gratuite jusqu\'à 48 h avant'),
               ),
             ],
           ),
@@ -329,9 +313,7 @@ class _ReservationScreenState extends State<ReservationScreen> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   '$_prixParPersonne DT × ${widget.voyageurs}',
-                  style: TextStyle(
-                    color: cs.onSurfaceVariant,
-                  ),
+                  style: TextStyle(color: cs.onSurfaceVariant),
                 ),
               ),
 

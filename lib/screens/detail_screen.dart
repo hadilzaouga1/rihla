@@ -122,7 +122,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   child: SafeArea(
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
-                      child: const FavoriteButton(),
+                      child: FavoriteButton(destination: d),
                     ),
                   ),
                 ),
@@ -316,7 +316,6 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 }
 
-// Tuile d'information
 class _Tuile extends StatelessWidget {
   final IconData icone;
   final String label;

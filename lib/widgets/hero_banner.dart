@@ -44,17 +44,11 @@ class HeroBanner extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.star,
-                      color: Colors.amber,
-                      size: 18,
-                    ),
+                    const Icon(Icons.star, color: Colors.amber, size: 18),
                     const SizedBox(width: 4),
                     Text(
                       destination.note.toString(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -73,7 +67,7 @@ class HeroBanner extends StatelessWidget {
                   Text(
                     'DESTINATION DU MOIS',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.85),
+                      color: Colors.white.withValues(alpha: 0.85),
                       fontSize: 11,
                       letterSpacing: 1.5,
                       fontWeight: FontWeight.w600,
@@ -91,17 +85,11 @@ class HeroBanner extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.place,
-                        color: Colors.white70,
-                        size: 16,
-                      ),
+                      const Icon(Icons.place, color: Colors.white70, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         destination.region,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                        ),
+                        style: const TextStyle(color: Colors.white70),
                       ),
                     ],
                   ),

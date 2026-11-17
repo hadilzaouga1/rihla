@@ -67,6 +67,18 @@
       "description": "Station balnéaire aux plages douces et à la médina animée."
     }
   ],
-  "reservations": [],
+  "reservations": [
+    {
+      "destinationId": "1",
+      "nom": "hadil",
+      "email": "hadil@gmail.com",
+      "telephone": "12345678",
+      "voyageurs": 2,
+      "formule": "Confort",
+      "total": 468,
+      "dateDepart": "2026-11-17T00:00:00.000",
+      "id": "T8w1DOQHhyE"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

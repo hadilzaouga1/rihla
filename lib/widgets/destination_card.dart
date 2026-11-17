@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/destination.dart';
-import 'favorite_button.dart'; 
+import 'favorite_button.dart';
 import '../screens/detail_screen.dart';
 
 class DestinationCard extends StatelessWidget {
@@ -17,9 +17,7 @@ class DestinationCard extends StatelessWidget {
       elevation: 0,
       color: cs.surfaceContainerLow,
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
@@ -60,8 +58,11 @@ class DestinationCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(Icons.place_outlined,
-                            size: 16, color: cs.onSurfaceVariant),
+                        Icon(
+                          Icons.place_outlined,
+                          size: 16,
+                          color: cs.onSurfaceVariant,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           destination.region,
@@ -83,7 +84,7 @@ class DestinationCard extends StatelessWidget {
                             color: cs.primary,
                           ),
                         ),
-                        const FavoriteButton(),
+                        FavoriteButton(destination: destination),
                       ],
                     ),
                   ],

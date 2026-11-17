@@ -7,6 +7,7 @@ import '../widgets/search_box.dart';
 import '../widgets/hero_banner.dart';
 import '../widgets/section_title.dart';
 import '../widgets/destination_card.dart';
+import 'favoris_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,17 +20,14 @@ class _HomeScreenState extends State<HomeScreen> {
   String _categorie = 'Tout';
   int _onglet = 0;
 
-  // AJOUT : Le Future qui contient la requête API
   late Future<List<Destination>> _futurDestinations;
 
   @override
   void initState() {
     super.initState();
-    // On lance la requête UNE SEULE FOIS ici, pas dans build()
     _futurDestinations = ApiService.getDestinations();
   }
 
-  // Méthode pour recharger (utilisée par le RefreshIndicator et le bouton Réessayer)
   Future<void> _recharger() async {
     final futur = ApiService.getDestinations();
     setState(() {
@@ -40,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (_) {}
   }
 
-  // Le filtre s'applique maintenant sur la liste reçue en paramètre
   List<Destination> _filtrer(List<Destination> toutes) {
     if (_categorie == 'Tout') return toutes;
     return toutes.where((d) => d.categorie == _categorie).toList();
@@ -52,6 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: _onglet == 0
             ? _construireExplorer()
+            : _onglet == 1
+            ? const FavorisScreen()
             : const Center(child: Text('Bientôt disponible')),
       ),
       bottomNavigationBar: NavigationBar(
@@ -82,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // NOUVEAU : Le FutureBuilder gère les 3 états (attente, erreur, données)
   Widget _construireExplorer() {
     return FutureBuilder<List<Destination>>(
       future: _futurDestinations,
@@ -108,20 +106,17 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // MODIFIÉ : Prend la liste en paramètre
   Widget _construireAccueil(List<Destination> destinations) {
     final filtrees = _filtrer(destinations);
 
     return ListView(
-      physics:
-          const AlwaysScrollableScrollPhysics(), // Pour pouvoir tirer même si la liste est courte
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       children: [
         const HomeHeader(prenom: 'Hadil'),
         const SizedBox(height: 20),
         const SearchBox(),
         const SizedBox(height: 20),
-        // On affiche la première destination de la liste reçue du serveur
         HeroBanner(destination: destinations.first),
         const SizedBox(height: 24),
 
@@ -152,7 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 20),
         const SectionTitle(titre: 'Populaires', action: 'Voir tout'),
         const SizedBox(height: 12),
-        // On boucle sur la liste filtrée (qui vient du serveur)
         for (final d in filtrees)
           DestinationCard(key: ValueKey(d.id), destination: d),
       ],
@@ -160,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// NOUVEAU : Le widget d'erreur à mettre tout en bas du fichier (hors de la classe)
 class ErreurReseau extends StatelessWidget {
   final String message;
   final VoidCallback onReessayer;
