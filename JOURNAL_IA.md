@@ -7,8 +7,8 @@ Au moins 4 lignes, dont au moins une suggestion **modifiée** ou **rejetée**.
 | # | Outil Copilot | Demande / intention | Décision | Pourquoi |
 |---|---|---|---|---|
 | 1 | Complétion | TODO basculer du FavorisModel | Modifiée | oubli de `notifyListeners()`, ajouté à la main |
-| 2 |Chat inline (Ctrl+I) | ajoute un badge avec le nombre de favoris dans la BottomNavigationBar|la suggestion utilisait `context.watch` dans le `BottomNavigationBarItem` sans `Consumer`, provoquait un rebuild de toute la barre ; remplacé par `Consumer<FavorisModel>` ciblé | 
-| 3 | /explain|/explain final favori = context.watch<FavorisModel>().estFavori(destination); context.read<FavorisModel>().basculer(destination); | context.read<FavorisModel>() récupère le modèle sans s’abonner aux changements;basculer(destination) ajoute la destination aux favoris si elle n’y est pas, ou la retire si elle y est déjà. C’est utilisé au clic, car on veut déclencher l’action, pas écouter depuis le callback. |
+| 2 | Chat inline (Ctrl+I) | « ajoute un badge avec le nombre de favoris » sur la NavigationDestination Favoris | Modifiée | Copilot proposait `context.watch` dans tout le `build` de HomeScreen, ce qui reconstruit tout l'écran à chaque favori ; j'ai utilisé `Consumer<FavorisModel>` autour du seul `Badge` et `isLabelVisible: nombre > 0` pour cacher le badge à 0 |
+| 3 | /explain | Sélection de `context.watch<FavorisModel>().estFavori(destination)` et `context.read<FavorisModel>().gererFavori(destination)` | Acceptée | `watch` s'abonne au modèle et reconstruit le widget à chaque `notifyListeners()` ; `read` récupère le modèle une seule fois sans s'abonner, adapté à un callback comme onPressed |
 | 4 |Complétion |estFavori(Destination d) dans le modèle | Rejetée| Copilot proposait _favoris.containsKey(d.nom) ; la clé doit être d.id (stable après rechargement API)|
 | 5 |Message de commit (✨)  | proposer un message pour le commit du Provider|Modifiée |Copilot a proposé update main.dart ; corrigé au format feat(favoris): branche le ChangeNotifierProvider au-dessus de MaterialApp |
 
@@ -21,7 +21,7 @@ watch pour afficher l’état à jour, read pour modifier l'état
 
 ## Questions de compréhension
 **Partie 1** — Que se passe-t-il pour `main` si je casse l'application sur `feature/favoris` ?
-main reste intact : les modifications et commits faits sur feature/favoris appartiennent à cette branche. Si l’application y est cassée, le problème n’affecte pas la version validée sur main tant que tu ne fusionnes pas la branche.
+`main` reste intact : les commits faits sur `feature/favoris` n'appartiennent qu'à cette branche. Tant que la branche n'est pas fusionnée par une Pull Request, la version validée sur `main` n'est pas affectée.
 **Partie 2**
 1. Pourquoi `FavoriteButton` peut-il être un `StatelessWidget` alors que son affichage change ?
 FavoriteButton ne stocke pas lui-même l’état du favori : il le lit depuis FavorisModel avec context.watch. Quand ce modèle change, Provider reconstruit le widget, qui affiche alors le cœur plein ou vide.Il peut donc être StatelessWidget.
@@ -34,8 +34,8 @@ Les favoris sont conservés uniquement en mémoire dans la Map de FavorisModel. 
 Pour les conserver, il faut les enregistrer dans un stockage persistant
 **Partie 4**
 1. Pourquoi la Partie 3 n'a-t-elle produit aucun conflit ?
-La Partie 3 n’a probablement pas produit de conflit parce que Git pouvait combiner automatiquement les changements : les branches n’avaient pas modifié les mêmes lignes de façon incompatible, ou l’une était déjà à jour avec les changements de l’autre.
+Parce que seule la branche `feature/favoris` avait modifié ces fichiers : `main` n'avait pas bougé depuis la création de la branche, donc Git a pu fusionner sans ambiguïté. Un conflit n'apparaît que si deux branches modifient la même ligne.
 
 2. Que se passe-t-il si j'oublie de supprimer un marqueur `=======` ?
-Le marqueur sépare les deux versions d’un conflit. S’il reste dans le fichier, le conflit n’est pas vraiment résolu : le marqueur est traité comme du texte du fichier et peut provoquer une erreur de compilation ou un comportement incorrect.
+Le marqueur reste dans le fichier comme du texte : il n'est pas du code Dart valide, donc la compilation échoue (`flutter run` affiche une erreur de syntaxe), et même s'il passait, on commiterait un fichier contenant les deux versions.
 
