@@ -8,6 +8,8 @@ import '../widgets/hero_banner.dart';
 import '../widgets/section_title.dart';
 import '../widgets/destination_card.dart';
 import 'favoris_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/favoris_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -60,18 +62,30 @@ class _HomeScreenState extends State<HomeScreen> {
             _onglet = index;
           });
         },
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.explore_outlined),
             selectedIcon: Icon(Icons.explore),
             label: 'Explorer',
           ),
           NavigationDestination(
-            icon: Icon(Icons.favorite_border),
-            selectedIcon: Icon(Icons.favorite),
+            icon: Consumer<FavorisModel>(
+              builder: (context, favoris, _) => Badge(
+                isLabelVisible: favoris.nombre > 0,
+                label: Text('${favoris.nombre}'),
+                child: const Icon(Icons.favorite_border),
+              ),
+            ),
+            selectedIcon: Consumer<FavorisModel>(
+              builder: (context, favoris, _) => Badge(
+                isLabelVisible: favoris.nombre > 0,
+                label: Text('${favoris.nombre}'),
+                child: const Icon(Icons.favorite),
+              ),
+            ),
             label: 'Favoris',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
             label: 'Profil',

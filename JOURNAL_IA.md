@@ -1,6 +1,6 @@
 # Journal IA — TP6 (Copilot)
 
-Nom : Zaouga Hadil Dépôt : ……………………
+Nom : Zaouga Hadil Dépôt : https://github.com/hadilzaouga1/rihla
 
 Au moins 4 lignes, dont au moins une suggestion **modifiée** ou **rejetée**.
 
