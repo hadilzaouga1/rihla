@@ -10,6 +10,7 @@ import '../widgets/destination_card.dart';
 import 'favoris_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/favoris_model.dart';
+import '../providers/reglages_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -127,7 +128,22 @@ class _HomeScreenState extends State<HomeScreen> {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       children: [
-        const HomeHeader(prenom: 'Hadil'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Expanded(child: HomeHeader(prenom: 'Hadil')),
+            IconButton(
+              tooltip: 'Changer de thème',
+              icon: Icon(
+                context.watch<ReglagesModel>().sombre
+                    ? Icons.light_mode
+                    : Icons.dark_mode,
+              ),
+              onPressed: () => context.read<ReglagesModel>().basculerTheme(),
+            ),
+          ],
+        ),
+
         const SizedBox(height: 20),
         const SearchBox(),
         const SizedBox(height: 20),
