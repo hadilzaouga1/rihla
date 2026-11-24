@@ -45,6 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return toutes.where((d) => d.categorie == _categorie).toList();
   }
 
+  /// Texte du bandeau hors-ligne, avec la date du dernier chargement réussi.
+  String _texteBandeau() {
+    final d = ApiService.dateCache;
+    if (d == null) return 'Hors connexion : données enregistrées';
+    String deux(int n) => n.toString().padLeft(2, '0');
+    return 'Hors connexion : données du ${deux(d.day)}/${deux(d.month)}/${d.year}'
+        ' à ${deux(d.hour)}:${deux(d.minute)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -133,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        'Hors connexion : données enregistrées',
+                        _texteBandeau(),
                         style: TextStyle(color: cs.onSecondaryContainer),
                       ),
                     ),

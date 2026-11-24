@@ -9,8 +9,13 @@ class ApiService {
   static Uri _uri(String chemin) => Uri.parse('${ApiConfig.baseUrl}$chemin');
 
   static const _cleCache = 'cache_destinations';
+  static const _cleDate = 'cache_date';
 
+  /// true si la dernière liste affichée vient du cache (serveur injoignable).
   static bool depuisCache = false;
+
+  /// Date du dernier chargement réussi (affichée dans le bandeau).
+  static DateTime? dateCache;
 
   static List<Destination> _decoder(String corps) => (jsonDecode(corps) as List)
       .map((e) => Destination.fromJson(e as Map<String, dynamic>))
@@ -31,6 +36,7 @@ class ApiService {
       final corps = utf8.decode(reponse.bodyBytes);
       // TODO 4 : on mémorise le JSON brut, seulement après un 200
       await prefs.setString(_cleCache, corps);
+      await prefs.setString(_cleDate, DateTime.now().toIso8601String());
       depuisCache = false;
       return _decoder(corps);
     } catch (e) {
@@ -38,9 +44,19 @@ class ApiService {
       final cache = prefs.getString(_cleCache);
       if (cache == null) rethrow;
       // TODO 6 : sinon on signale le mode hors-ligne et on décode le cache
+      final date = prefs.getString(_cleDate);
+      dateCache = date == null ? null : DateTime.tryParse(date);
       depuisCache = true;
       return _decoder(cache);
     }
+  }
+
+  static Future<void> effacerCache() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cleCache);
+    await prefs.remove(_cleDate);
+    depuisCache = false;
+    dateCache = null;
   }
 
   static Future<String> creerReservation(Reservation reservation) async {
