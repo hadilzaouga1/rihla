@@ -38,4 +38,26 @@ Parce que seule la branche `feature/favoris` avait modifié ces fichiers : `main
 
 2. Que se passe-t-il si j'oublie de supprimer un marqueur `=======` ?
 Le marqueur reste dans le fichier comme du texte : il n'est pas du code Dart valide, donc la compilation échoue (`flutter run` affiche une erreur de syntaxe), et même s'il passait, on commiterait un fichier contenant les deux versions.
+**Partie 5**
+1.Pourquoi stocke-t-on des String JSON et pas directement des objets Destination ?
+- shared_preferences ne sait stocker que du texte, donc on transforme l'objet en JSON pour l'écrire, puis on le reconstruit à la lecture avec fromJson.
+2.Que fait exactement FavorisModel()..charger() ? Que se passerait-il avec FavorisModel().charger() ?
+- La cascade .. exécute charger() tout en renvoyant l'instance du modèle alors que sans cascade create recevrait un Future et l'app planterait.
+3.Pourquoi oublier notifyListeners() à la fin de charger() serait-il un bug discret ?
+- Sans cet appel les données sont bien chargées en mémoire mais l'écran ne se rafraîchit jamais affichant 0 favori sans aucune erreur visible.
+
+- Une suggestion modifiée ou rejetée.
+J'ai demandé à Copilot de générer la méthode basculerTheme(). Il a proposé la sauvegarde avec prefs.setBool et l'inversion du booléen, mais il avait oublié d'appeler notifyListeners() à la fin. J'ai modifié sa suggestion en rajoutant cet appel, sinon l'interface ne serait pas passée en mode sombre immédiatement.
+
+- Pourquoi mémoriser le cache après avoir vérifié le statusCode, et pas avant ?
+Parce qu'on ne veut sauvegarder que les données valides et Si le serveur renvoie une erreur on ne veut pas l'enregistrer dans le cache et l'afficher à l'utilisateur plus tard comme si c'était de vraies destinations.
+
+- Que voit l'utilisateur qui ouvre Rihla pour la première fois sans serveur ? Pourquoi ?
+Il voit l'écran d'erreur  C'est parce que le cache est vide au premier lancement et que l'application n'a aucune donnée de secours à afficher.
+
+- Que fait rethrow, et qui récupère l'erreur ensuite ?
+rethrow renvoie l'erreur vers le haut pour ne pas l'étouffer. C'est le FutureBuilder dans l'écran d'accueil qui la récupère (via snapshot.hasError) ce qui permet d'afficher l'écran d'erreur à l'utilisateur.
+
+
+
 

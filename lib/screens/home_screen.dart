@@ -45,6 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return toutes.where((d) => d.categorie == _categorie).toList();
   }
 
+  /// Texte du bandeau hors-ligne, avec la date du dernier chargement réussi.
+  String _texteBandeau() {
+    final d = ApiService.dateCache;
+    if (d == null) return 'Hors connexion : données enregistrées';
+    String deux(int n) => n.toString().padLeft(2, '0');
+    return 'Hors connexion : données du ${deux(d.day)}/${deux(d.month)}/${d.year}'
+        ' à ${deux(d.hour)}:${deux(d.minute)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -112,9 +121,41 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         // 3. Données reçues
         final destinations = snapshot.data!;
-        return RefreshIndicator(
-          onRefresh: _recharger,
-          child: _construireAccueil(destinations),
+        final cs = Theme.of(context).colorScheme;
+        return Column(
+          children: [
+            if (ApiService.depuisCache)
+              Container(
+                width: double.infinity,
+                color: cs.secondaryContainer,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      size: 18,
+                      color: cs.onSecondaryContainer,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        _texteBandeau(),
+                        style: TextStyle(color: cs.onSecondaryContainer),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _recharger,
+                child: _construireAccueil(destinations),
+              ),
+            ),
+          ],
         );
       },
     );
