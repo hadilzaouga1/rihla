@@ -10,7 +10,6 @@ import '../widgets/destination_card.dart';
 import 'favoris_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/favoris_model.dart';
-import '../providers/reglages_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -113,9 +112,41 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         // 3. Données reçues
         final destinations = snapshot.data!;
-        return RefreshIndicator(
-          onRefresh: _recharger,
-          child: _construireAccueil(destinations),
+        final cs = Theme.of(context).colorScheme;
+        return Column(
+          children: [
+            if (ApiService.depuisCache)
+              Container(
+                width: double.infinity,
+                color: cs.secondaryContainer,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.wifi_off,
+                      size: 18,
+                      color: cs.onSecondaryContainer,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Hors connexion : données enregistrées',
+                        style: TextStyle(color: cs.onSecondaryContainer),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _recharger,
+                child: _construireAccueil(destinations),
+              ),
+            ),
+          ],
         );
       },
     );
@@ -128,22 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(20),
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Expanded(child: HomeHeader(prenom: 'Hadil')),
-            IconButton(
-              tooltip: 'Changer de thème',
-              icon: Icon(
-                context.watch<ReglagesModel>().sombre
-                    ? Icons.light_mode
-                    : Icons.dark_mode,
-              ),
-              onPressed: () => context.read<ReglagesModel>().basculerTheme(),
-            ),
-          ],
-        ),
-
+        const HomeHeader(prenom: 'Hadil'),
         const SizedBox(height: 20),
         const SearchBox(),
         const SizedBox(height: 20),
