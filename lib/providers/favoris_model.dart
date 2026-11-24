@@ -31,6 +31,13 @@ class FavorisModel extends ChangeNotifier {
     await prefs.setStringList(_cle, textes);
   }
 
+  Future<void> vider() async {
+    _favoris.clear();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_cle);
+    notifyListeners();
+  }
+
   bool gererFavori(Destination d) {
     debugPrint('Basculement du favori pour: ${d.id}');
     final bool ajoute = !_favoris.containsKey(d.id);
